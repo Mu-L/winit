@@ -744,7 +744,7 @@ unsafe impl Sync for EventLoopProxy {}
 
 impl EventLoopProxyProvider for EventLoopProxy {
     fn wake_up(&self) {
-        if self.has_sent_wakeup_msg.fetch_or(true, Ordering::AcqRel) {
+        if self.has_sent_wakeup_msg.swap(true, Ordering::AcqRel) {
             // Do not send a wakeup event if one has already been sent, but hasn't been processed
             // yet. This prevents errors when the internal message queue fills up, and effectively
             // coalesces wakeups.
